@@ -5,7 +5,7 @@ services:
     volumes:
       - .:/app
     environment:
-      EXTRA_ARGS: --log-tokens true
+      EXTRA_ARGS: ""
       LOG_LEVEL: DEBUG
       PYTHONUNBUFFERED: "1"
     env_file: "login.env"
