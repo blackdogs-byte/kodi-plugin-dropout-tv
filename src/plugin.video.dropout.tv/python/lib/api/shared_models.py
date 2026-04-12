@@ -29,6 +29,13 @@ class ItemLinks(TypedDict):
   files: Optional[Link]
   site: Optional[Link]
   video_page: Optional[Link]
+  """
+  At least inside collections 'video_page' points to the dropout.tv page.
+
+  That page will have an iframe pointing to 'embed.vhx.tv' with window.OTTData.config_url
+  
+  Behind that config_url we can find the hls streams to vod-adaptive-ak.vimeocdn.com
+  """
 
 class ItemBase(TypedDict):
   id: int
