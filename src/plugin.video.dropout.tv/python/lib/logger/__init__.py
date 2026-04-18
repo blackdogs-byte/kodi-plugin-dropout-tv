@@ -1,4 +1,6 @@
 import xbmc
+from . import logging_utils
+from . import requestlogger
 
 logLevel = xbmc.LOGWARNING
 
@@ -42,3 +44,6 @@ def setLogLevel(minLevel: int):
   """
   global logLevel
   logLevel = minLevel
+
+token_or_stars = logging_utils.token_or_stars
+logResponse = requestlogger.logResponse

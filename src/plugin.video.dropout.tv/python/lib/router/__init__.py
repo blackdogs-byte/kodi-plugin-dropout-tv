@@ -7,8 +7,8 @@ import xbmcplugin
 from urllib.parse import parse_qs
 
 from ..constants import PluginConstants
-from ..auth.cookies import load_cookies_to_session
-from ..auth.get_token import get_bearer_token
+from ..cookies import load_cookies_to_session
+from ..auth import get_bearer_token
 from ..api.products import get_featured_items
 from ..api.collections import get_collection
 from ..html.videos import get_video

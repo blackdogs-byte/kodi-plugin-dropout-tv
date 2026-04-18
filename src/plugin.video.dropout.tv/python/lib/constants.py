@@ -9,8 +9,7 @@ class PluginConstants():
       query: str,
       site_id: int,
       hub_id: int,
-      url_login: str,
-      url_browse: str,
+      url_host_web_app: str,
       url_api_featured: str,
       url_api_collections: str
     ):
@@ -19,7 +18,6 @@ class PluginConstants():
     self.query = query
     self.site_id = site_id
     self.hub_id = hub_id
-    self.url_login = url_login
-    self.url_browse = url_browse
+    self.url_host_web_app = url_host_web_app
     self.url_api_featured = url_api_featured
     self.url_api_collections = url_api_collections

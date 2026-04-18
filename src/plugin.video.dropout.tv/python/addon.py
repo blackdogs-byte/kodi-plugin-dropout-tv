@@ -8,14 +8,15 @@ import xbmcplugin
 from lib.constants import PluginConstants
 from lib.router import resolve_route
 
+host = f'watch.dropout.tv'
+
 constants = PluginConstants(
   base_url=sys.argv[0],
   addon_handle=int(sys.argv[1]),
   query=sys.argv[2],
   site_id=36348,
   hub_id=1221449,
-  url_login="https://watch.dropout.tv/login",
-  url_browse="https://watch.dropout.tv/browse",
+  url_host_web_app="watch.dropout.tv",
   url_api_featured="https://api.vhx.tv/products/featured_items",
   url_api_collections="https://api.vhx.tv/collections"
 )

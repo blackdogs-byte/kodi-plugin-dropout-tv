@@ -1,4 +1,4 @@
-from ..logger import getLogger
+from ..logger import getLogger, logResponse
 logger = getLogger(__name__)
 
 import requests
@@ -6,7 +6,6 @@ from typing import Tuple, Optional
 from bs4 import BeautifulSoup
 
 from ..constants import PluginConstants
-from ..logger.requestlogger import logResponse
 
 def get_video(constants: PluginConstants, session: requests.Session, droupoutHref: str) -> Tuple[Optional[str], str]:
   """
@@ -15,6 +14,8 @@ def get_video(constants: PluginConstants, session: requests.Session, droupoutHre
   logger.debug(f"Calling: {droupoutHref}")
   r = session.get(droupoutHref)
 
+  logger.debug(f"Calling: {droupoutHref}")
+  r = session.get(droupoutHref)
   logResponse(constants, r)
   err, iframeUrl = get_video_iframe_from_text(constants, r.text)
   if err:
