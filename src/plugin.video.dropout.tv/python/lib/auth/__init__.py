@@ -1,4 +1,3 @@
-from . import get_token, login
+from . import token
 
-login = login.login
-get_bearer_token = get_token.get_bearer_token
+get_bearer_token = token.get_bearer_token

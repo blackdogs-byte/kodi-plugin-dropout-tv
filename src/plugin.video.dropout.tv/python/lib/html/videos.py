@@ -24,6 +24,7 @@ def get_video(constants: PluginConstants, session: requests.Session, droupoutHre
   logger.debug(f"Calling: {iframeUrl}")
   r = session.get(iframeUrl)
 
+  # TODO: CONTINUE HERE -> Ideally, should get here now
   logResponse(constants, r)
   return "not implemented", ""
 
@@ -33,9 +34,6 @@ def get_video_iframe_from_text(constants: PluginConstants, text: str) -> Tuple[O
   """
   soup = BeautifulSoup(text, "html.parser")
 
-  # TODO: The html returned here does not contain the iframe.
-  # TODO: Maybe a recaptcha issue?
-  # TODO: Also currentuser etc. is not set...
   iframe_tag = soup.select_one("iframe[title='Video Player']")
   if not iframe_tag:
     return "HTML does not contain Video Player iframe", ""

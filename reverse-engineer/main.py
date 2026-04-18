@@ -1,11 +1,18 @@
 # run with
 # python /main.py --log-level DEBUG --email <your-email> --password <your-password>
 
-from typing import Optional, Tuple
-
 ### BEGIN SETUP UTILITIES ###
 
 import logging
+import sys
+
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+root.addHandler(handler)
+
 logger = logging.getLogger(__name__)
 
 import argparse

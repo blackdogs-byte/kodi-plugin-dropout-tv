@@ -7,13 +7,11 @@ import xbmcplugin
 from urllib.parse import parse_qs
 
 from ..constants import PluginConstants
-from ..cookies import load_cookies_to_session
+from ..fs import load_cookies_to_session
 from ..auth import get_bearer_token
-from ..api.products import get_featured_items
-from ..api.collections import get_collection
+from ..api import get_featured_items, get_collection
 from ..html.videos import get_video
-from ..render.item import render_item
-from ..render.video import play_video
+from ..render import render_item, play_video
 
 def resolve_route(constants: PluginConstants):
   args = parse_qs(constants.query[1:])

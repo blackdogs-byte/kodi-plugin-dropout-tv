@@ -78,6 +78,17 @@
                         <heading>32094</heading>
                     </control>
                 </setting>
+                <!-- ********************** TOKEN FILE PATH ********************** -->
+                <setting label="32095" type="string"   id="tokenfile" help="">
+                    <level>4</level>
+                    <default>special://profile/addon_data/plugin.video.dropout.tv/jwt.token</default>
+                    <constraints>
+                        <allowempty>false</allowempty>
+                    </constraints>
+                    <control type="edit" format="string">
+                        <heading>32095</heading>
+                    </control>
+                </setting>
             </group>
         </category>
     </section>

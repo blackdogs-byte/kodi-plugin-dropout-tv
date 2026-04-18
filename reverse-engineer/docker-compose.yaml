@@ -2,6 +2,7 @@ services:
   rev:
     build: .
     command: sh -c 'python /app/main.py --log-level $$LOG_LEVEL --email $$EMAIL --password $$PASSWORD $$EXTRA_ARGS'
+    # command: sh -c 'python /app/tokendecode.py --token $$JWT_TOKEN $$EXTRA_ARGS'
     volumes:
       - .:/app
     environment:
