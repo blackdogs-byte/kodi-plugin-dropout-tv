@@ -3,15 +3,24 @@
 
 ### BEGIN SETUP UTILITIES ###
 
+from typing import Optional, Tuple
+
 import logging
 import sys
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
-root.addHandler(handler)
+formatter = logging.Formatter(fmt='%(name)s %(levelname)s %(message)s')
+
+stdOutHandler = logging.StreamHandler(sys.stdout)
+stdOutHandler.setLevel(logging.DEBUG)
+stdOutHandler.setFormatter(formatter)
+root.addHandler(stdOutHandler)
+fileHandler = logging.FileHandler(filename='app.log', mode='w')
+fileHandler.setLevel(logging.DEBUG)
+fileHandler.setFormatter(formatter)
+root.addHandler(fileHandler)
 
 logger = logging.getLogger(__name__)
 
@@ -38,12 +47,7 @@ except Exception as err:
 if args is None:
   exit(1)
 
-logging.basicConfig(
-  filename='app.log',
-  filemode='w',
-  format='%(name)s %(levelname)s %(message)s',
-  level=args.log_level
-)
+root.setLevel(args.log_level)
 
 ### END SETUP UTILITIES ###
 
