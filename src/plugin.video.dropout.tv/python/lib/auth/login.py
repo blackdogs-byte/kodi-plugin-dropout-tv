@@ -43,7 +43,7 @@ def login(constants: PluginConstants, session: requests.Session) -> Tuple[Option
   r = session.get(loginUrl, headers=headers)
   logger.debug(f'GET {loginUrl}\nRETURNED\n\tHEADERS: {r.headers}\n\tBODY: {r.text}')
 
-  logger.debug("Extracting authenticity_token and utf hiden input values...")
+  logger.debug("Extracting authenticity_token and utf hidden input values...")
   soup = BeautifulSoup(r.text, "html.parser")
 
   authenticity_token = soup.select_one("input[name='authenticity_token']")["value"]

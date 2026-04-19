@@ -4,13 +4,17 @@ logger = getLogger(__name__)
 import requests
 from typing import Optional, Tuple, List, TypedDict, cast
 
-import jwt
+try:  # Python 3
+  import jwt
+except ImportError:  # Python 2
+  # The package is named pyjwt in Kodi: https://github.com/lottaboost/script.module.pyjwt/pull/1
+  import pyjwt as jwt # pyright: ignore[reportMissingImports]
 
 from .login import login
 
 from ..constants import PluginConstants
 from ..html import get_window_token
-from ..fs import store_cookies_from_session, load_cookies_to_session, load_token, store_token
+from ..fs import store_cookies_from_session, load_token, store_token
 
 def is_token_valid_login(token: str) -> bool:
   """
@@ -22,7 +26,7 @@ def is_token_valid_login(token: str) -> bool:
   """
   try:
     content: TokenContents = cast(TokenContents, jwt.decode(token,options={"verify_signature": False, "verify_exp": True}))
-    if content["user_id"]:
+    if content.get("user_id"):
       logger.debug(f"Token is valid")
       return True
     logger.debug(f"Token does not contain 'user_id'")
@@ -57,14 +61,16 @@ def get_bearer_token(constants: PluginConstants, session: requests.Session) -> T
   logger.debug(f"Error when trying to get bearer token: {err}, falling back to login")
 
   err, token = login(constants, session)
-  if not err and is_token_valid_login(token):
-    store_cookies_from_session(constants, session)
-    store_token(constants, token)
-    return None, token
+  if err:
+    return err, ""
+  if not is_token_valid_login(token):
+    return "Retreived Token is not valid", ""
 
-  return err, ""
+  store_cookies_from_session(constants, session)
+  store_token(constants, token)
+  return None, token
 
-class TokenContents(TypedDict):
+class TokenContents(TypedDict, total=False):
   """
   Decoded contents of the window.token (JWT)
   """

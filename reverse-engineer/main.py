@@ -51,6 +51,7 @@ import requests
 import urllib.parse
 from bs4 import BeautifulSoup
 import re
+import jwt
 
 host = f'watch.dropout.tv'
 baseUrl = f'https://{host}/'
@@ -122,5 +123,10 @@ if __name__ == "__main__":
   logger.debug(f'POST {loginUrl}\nREDIRECTED to {r.url} and\nRETURNED\n\tHEADERS: {r.headers}\nBODY:\n {r.text}')
   # that page then contains window.TOKEN as expected for 'after login'...
   window_token = get_window_token(r.text)
+  if not window_token:
+    exit(1)
+  logging.debug(f"Decoding token...")
+  res = jwt.decode(window_token, options={"verify_signature": False, "verify_exp": True})
+  logging.info(f"Token content: {res}")
 
   # TODO: what token(s) are used to play a video
