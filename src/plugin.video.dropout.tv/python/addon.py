@@ -1,5 +1,4 @@
-from lib.logger import getLogger
-from lib.logger import setLogLevel
+from lib.logger import setLogLevel, getLogger
 logger = getLogger(__name__)
 
 import sys

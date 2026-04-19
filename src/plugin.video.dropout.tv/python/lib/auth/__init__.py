@@ -1,3 +1,3 @@
-from . import token
+from .token import get_bearer_token
 
-get_bearer_token = token.get_bearer_token
+__all__ = ["get_bearer_token"]

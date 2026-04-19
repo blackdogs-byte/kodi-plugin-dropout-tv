@@ -1,3 +1,3 @@
-from . import window_token
+from .window_token import get_window_token
 
-get_window_token = window_token.get_window_token
+__all__ = ["get_window_token"]

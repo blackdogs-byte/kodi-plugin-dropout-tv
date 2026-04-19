@@ -1,5 +1,4 @@
-from . import products
-get_featured_items = products.get_featured_items
+from .products import get_featured_items
+from .collections import get_collection
 
-from . import collections
-get_collection = collections.get_collection
+__all__ = ["get_featured_items", "get_collection"]
