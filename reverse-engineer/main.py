@@ -136,16 +136,17 @@ def login(session: requests.Session, email, password) -> Tuple[Optional[str], st
     "Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
   }
   r = session.post(loginUrl, headers=headers, data=formdata)
-  # Should redirect to /browse
-  # logger.debug(f'POST {loginUrl}\nREDIRECTED to {r.url} and\nRETURNED\n\tHEADERS: {r.headers}\nBODY:\n {r.text}')
   logger.debug(f'POST {loginUrl}\nREDIRECTED to {r.url} and\nRETURNED\n\tHEADERS: {r.headers}')
-  # that page then contains window.TOKEN as expected for 'after login'...
+
   window_token = get_window_token(r.text)
   csrf_token: str = soup.select_one("meta[name='csrf-token']")["content"]
   if window_token:
     logging.debug(f"Decoding token...")
     res = jwt.decode(window_token, options={"verify_signature": False, "verify_exp": True})
     logging.info(f"Token content: {res}")
+  else:
+    # log response body on error
+    logger.debug(f'POST {loginUrl} RETURNED BODY:\n {r.text}')
   return window_token, csrf_token
 
 def get_video_iframe_from_text(text: str) -> None | str:
@@ -161,47 +162,51 @@ def get_video_iframe_from_text(text: str) -> None | str:
   logger.info(f"Extracted embed.vhx.tv url '{url}'")
   return url
 
+def play_video(session: requests.Session):
+  ########### Play Video flow ###########
+  # TODO: Continue here with one video to get the hls streams to vod-adaptive-ak.vimeocdn.com links
+
+  # VISIT SPECIFIC VIDEO PAGE
+  headers = {
+    'Host': host,
+    'User-Agent': header_user_agent,
+    'Accept-Language': header_accept_language,
+    'Upgrade-Insecure-Requests': '1',
+    'Referer': baseUrl,
+  }
+  r = session.get(aVideoUrl, headers=headers)
+  logger.debug(f'GET {loginUrl}\nRETURNED\n\tHEADERS: {r.headers}')
+
+  iframeUrl = get_video_iframe_from_text(r.text)
+  if not iframeUrl:
+    # log response body on error
+    logger.debug(f'GET {loginUrl}\nRETURNED BODY: {r.text}')
+    return
+
+  # CALL IFRAME
+  headers = {
+    'User-Agent': header_user_agent,
+    'Accept': 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': header_accept_language,
+    'Upgrade-Insecure-Requests': '1',
+    'Referer': baseUrl,
+    'Sec-Fetch-Dest': 'iframe',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'cross-site',
+  }
+  r = session.get(iframeUrl, headers=headers)
+  logger.debug(f'GET {iframeUrl}\nRETURNED\n\tHEADERS: {r.headers}\n\tBODY: {r.text}')
+
 if __name__ == "__main__":
-  logger.warning("Hardcoded playalong to log into dropout TV and retreive video stream")
+  logger.warning(">>>>>>> Hardcoded playalong to log into dropout TV and retreive video stream <<<<<<<")
   session = requests.Session()
   csrfToken: Optional[str] = None
 
   try:
-    ########### Auth flow ###########
     windowToken, csrfToken = login(session, args.email, args.password)
+    play_video(session)
 
-    ########### Play Video flow ###########
-    # TODO: Continue here with one video to get the hls streams to vod-adaptive-ak.vimeocdn.com links
-
-    # VISIT SPECIFIC VIDEO PAGE
-    headers = {
-      'Host': host,
-      'User-Agent': header_user_agent,
-      'Accept-Language': header_accept_language,
-      'Upgrade-Insecure-Requests': '1',
-      'Referer': baseUrl,
-    }
-    r = session.get(aVideoUrl, headers=headers)
-    logger.debug(f'GET {loginUrl}\nRETURNED\n\tHEADERS: {r.headers}\n\tBODY: {r.text}')
-    # logger.debug(f'GET {loginUrl}\nRETURNED\n\tHEADERS: {r.headers}')
-
-    iframeUrl = get_video_iframe_from_text(r.text)
-    if not iframeUrl:
-      exit(1)
-
-    # CALL IFRAME
-    headers = {
-      'User-Agent': header_user_agent,
-      'Accept': 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': header_accept_language,
-      'Upgrade-Insecure-Requests': '1',
-      'Referer': baseUrl,
-      # 'Sec-Fetch-Dest': 'iframe',
-      # 'Sec-Fetch-Mode': 'navigate',
-      # 'Sec-Fetch-Site': 'cross-site',
-    }
-    r = session.get(iframeUrl, headers=headers)
-    logger.debug(f'GET {iframeUrl}\nRETURNED\n\tHEADERS: {r.headers}\n\tBODY: {r.text}')
   finally:
+    logger.info(">>>>>>> Running clean-up <<<<<<<")
     if csrfToken:
       logout(session, csrfToken)
