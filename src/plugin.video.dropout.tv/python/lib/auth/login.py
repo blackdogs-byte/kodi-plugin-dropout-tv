@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from typing import Optional, Tuple
 
 from ..constants import PluginConstants
-from ..html import get_window_token
+from ..html_parser import get_window_token
 from .credentials import get_credentials
 
 header_user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'

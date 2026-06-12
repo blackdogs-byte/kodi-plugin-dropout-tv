@@ -4,24 +4,28 @@ logger = getLogger(__name__)
 import requests
 from typing import Optional, Tuple, List, TypedDict, cast
 
-try:  # Python 3
-  import jwt
-except ImportError:  # Python 2
-  # The package is named pyjwt in Kodi: https://github.com/lottaboost/script.module.pyjwt/pull/1
-  import pyjwt as jwt # pyright: ignore[reportMissingImports]
+# Try Kodi module first, then raw jwt
+try:
+    import pyjwt as jwt
+except ImportError:
+    try:
+        import jwt
+    except ImportError:
+        # Last resort - load from bundled lib
+        import sys, os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+        import jwt
 
 from .login import login
 
 from ..constants import PluginConstants
-from ..html import get_window_token
+from ..html_parser import get_window_token
 from ..fs import store_cookies_from_session, load_token, store_token
 
 def is_token_valid_login(token: str) -> bool:
   """
   Check the JWT token for 'user_id' field and not being expired.
-
   Returns TRUE, when good to use for API calls
-
   Returns FALSE, if not logged in or expired
   """
   try:
@@ -39,7 +43,6 @@ def is_token_valid_login(token: str) -> bool:
 def get_bearer_token(constants: PluginConstants, session: requests.Session) -> Tuple[Optional[str], str]:
   """
   Wrapper to get Bearer Token.
-
   Uses existing session from FS - Logs back in if necessary
   """
   ### ATTEMPT 1 -> Load existing token from filesystem ###
